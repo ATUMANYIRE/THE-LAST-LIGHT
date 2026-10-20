@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0a0f1d;
+  --bg-secondary: #131b31;
+  --text-primary: #f8fafc;
+  --accent-amber: #f59e0b;
+  --accent-blue: #38bdf8;
+  --accent-emerald: #10b981;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* High Contrast Mode Overrides (WCAG AAA) */
+.high-contrast {
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --text-primary: #ffff00;
+  --accent-amber: #ffff00;
+  --accent-blue: #00ffff;
+  --accent-emerald: #00ff66;
+}
+
+.high-contrast * {
+  border-color: #ffff00 !important;
+}
+
+.high-contrast button {
+  border: 2px solid #ffff00 !important;
+  color: #ffff00 !important;
+  background-color: #000000 !important;
+}
+
+.high-contrast button:hover,
+.high-contrast button:focus {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+}
+
+/* Reduced Motion Mode Overrides */
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+/* Large Text Mode */
+.large-text {
+  font-size: 115%;
+}
+
+/* Accessible visible focus ring across all interactive controls */
+*:focus-visible {
+  outline: 3px solid #f59e0b !important;
+  outline-offset: 2px !important;
+}
+
+/* Custom lantern glow pulse */
+@keyframes lanternGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 22px rgba(251, 191, 36, 0.85));
+  }
+}
+
+.lantern-pulse {
+  animation: lanternGlow 3s ease-in-out infinite;
+}
+
+/* Sound wave ping for acoustic beacons */
+@keyframes acousticRing {
+  0% {
+    r: 6;
+    opacity: 0.9;
+  }
+  100% {
+    r: 24;
+    opacity: 0;
+  }
+}
+
+.acoustic-wave {
+  animation: acousticRing 2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
