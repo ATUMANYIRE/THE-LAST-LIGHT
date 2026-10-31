@@ -10,6 +10,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // New game identity palette
+        ivory: "#F6F3EB",
+        limestone: "#DDD7CB",
+        paper: "#EDE8DC",
+        sage: "#8D9B87",
+        sky: "#A9C7D8",
+        ink: "#25343B",
+        "ink-muted": "#4A5E68",
+        coral: "#C87D70",
+        brass: "#B59A67",
+        // Chapter-specific dark tones (for Ch3 night)
+        night: {
+          950: "#0E1820",
+          900: "#141F2A",
+          800: "#1A2830",
+          700: "#20323E",
+        },
+        // Legacy - kept for backwards compat with tests/engine that may reference
         midnight: {
           950: "#060913",
           900: "#0a0f1d",
@@ -18,54 +36,30 @@ const config: Config = {
           700: "#1e294b",
           600: "#2d3b66",
         },
-        glow: {
-          amber: "#f59e0b",
-          warm: "#fbbf24",
-          soft: "#fde68a",
-          gold: "#eab308",
-        },
-        dusk: {
-          lavender: "#818cf8",
-          purple: "#a855f7",
-          violet: "#c084fc",
-          mist: "#e0e7ff",
-        },
-        civic: {
-          teal: "#0d9488",
-          emerald: "#10b981",
-          rose: "#f43f5e",
-          sky: "#0284c7",
-        },
       },
       fontFamily: {
-        sans: [
-          "Inter",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "Roboto",
-          "sans-serif",
-        ],
+        display: ["var(--font-fraunces)", "Fraunces", "Georgia", "serif"],
+        sans: ["var(--font-dm-sans)", "DM Sans", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "Fira Code", "Courier New", "monospace"],
       },
       boxShadow: {
-        lantern: "0 0 25px -3px rgba(245, 158, 11, 0.45)",
-        "lantern-lg": "0 0 45px -5px rgba(251, 191, 36, 0.6)",
-        "neon-accessible": "0 0 15px 2px rgba(56, 189, 248, 0.5)",
+        warm: "0 4px 20px rgba(37, 52, 59, 0.15)",
+        "warm-lg": "0 8px 40px rgba(37, 52, 59, 0.22)",
+        brass: "0 0 20px -3px rgba(181, 154, 103, 0.4)",
       },
       animation: {
+        "fade-in-up": "fadeInUp 0.4s ease-out forwards",
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "float-gentle": "float 4s ease-in-out infinite",
-        "lantern-flicker": "flicker 2s ease-in-out infinite",
       },
       keyframes: {
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
         float: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-4px)" },
-        },
-        flicker: {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.88" },
         },
       },
     },

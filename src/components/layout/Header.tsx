@@ -5,6 +5,7 @@ import { useGameStore } from '../../store/gameStore';
 import {
   RotateCcw,
   Undo2,
+  Redo2,
   Settings,
   HelpCircle,
   Map,
@@ -20,7 +21,9 @@ export const Header: React.FC = () => {
     currentChapter,
     budget,
     history,
+    redoStack,
     undo,
+    redo,
     resetLevel,
     openSettings,
     openHelp,
@@ -89,6 +92,17 @@ export const Header: React.FC = () => {
             aria-label="Undo last placement"
           >
             <Undo2 className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={redo}
+            disabled={redoStack.length === 0}
+            data-testid="redo-button"
+            className="p-2 rounded-lg bg-midnight-900 border border-midnight-700 text-slate-300 hover:text-slate-100 hover:bg-midnight-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            title="Redo last placement (Ctrl+Y / Ctrl+Shift+Z)"
+            aria-label="Redo last placement"
+          >
+            <Redo2 className="w-4 h-4" />
           </button>
 
           <button

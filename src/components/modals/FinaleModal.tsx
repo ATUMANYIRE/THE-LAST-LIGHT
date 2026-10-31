@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { triggerConfetti } from '../../utils/confetti';
 import { CharacterAvatar } from '../game/CharacterAvatar';
+import { ALL_CHAPTERS } from '../../engine/levels';
 import {
   Trophy,
   Sparkles,
@@ -17,12 +18,15 @@ import {
 } from 'lucide-react';
 
 export const FinaleModal: React.FC = () => {
+  const uniqueResidentCount = new Set(ALL_CHAPTERS.flatMap(chapter => chapter.residents.map(resident => resident.id))).size;
+  const journeyCount = ALL_CHAPTERS.reduce((total, chapter) => total + chapter.residents.length, 0);
   const {
     showFinaleModal,
     openFinale,
     openChapterSelect,
     loadChapter,
     settings,
+    playerName,
   } = useGameStore();
 
   useEffect(() => {
@@ -84,7 +88,7 @@ export const FinaleModal: React.FC = () => {
                 Grand Finale Commendation
               </span>
               <h2 id="finale-title" className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight">
-                Universal City Achieved
+                {playerName ? `Congratulations, ${playerName}!` : 'Universal City Achieved'}
               </h2>
             </div>
           </div>
@@ -110,7 +114,7 @@ export const FinaleModal: React.FC = () => {
         </div>
 
         {/* Civics Metrics Matrix */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="p-3.5 rounded-xl bg-midnight-950/80 border border-midnight-800 text-center">
             <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-medium">
               Districts Connected
@@ -121,10 +125,18 @@ export const FinaleModal: React.FC = () => {
           </div>
           <div className="p-3.5 rounded-xl bg-midnight-950/80 border border-midnight-800 text-center">
             <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-medium">
-              Neighbors Empowered
+              Unique Neighbors Empowered
             </span>
             <span className="text-xl font-mono font-black text-emerald-400">
-              6 / 6
+              {uniqueResidentCount} / {uniqueResidentCount}
+            </span>
+          </div>
+          <div className="p-3.5 rounded-xl bg-midnight-950/80 border border-midnight-800 text-center">
+            <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-medium">
+              Successful Journeys
+            </span>
+            <span className="text-xl font-mono font-black text-emerald-400">
+              {journeyCount} / {journeyCount}
             </span>
           </div>
           <div className="p-3.5 rounded-xl bg-midnight-950/80 border border-midnight-800 text-center">

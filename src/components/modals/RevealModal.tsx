@@ -2,83 +2,106 @@
 
 import React from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { CharacterAvatar } from '../game/CharacterAvatar';
 import { Eye, ArrowRight, ShieldAlert, Sparkles } from 'lucide-react';
+import { friendlyText } from '../../utils/friendlyText';
 
 export const RevealModal: React.FC = () => {
   const { currentChapter, showRevealModal, acknowledgeReveal } = useGameStore();
-
   if (!showRevealModal) return null;
 
   const reveal = currentChapter.dialogues.reveal;
   const invisibleResident = currentChapter.residents.find(
     (r) => r.id === currentChapter.invisibleResidentId
   );
-
   if (!invisibleResident) return null;
+
+  const accent = '#B59A67';
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-midnight-950/85 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="reveal-title"
       data-testid="reveal-modal"
+      style={{ background: 'rgba(20,31,42,0.85)', backdropFilter: 'blur(6px)' }}
     >
-      <div className="w-full max-w-lg bg-midnight-900 border-2 border-glow-amber/70 rounded-3xl p-5 sm:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-        {/* Amber beacon flare */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-56 h-56 rounded-full bg-amber-500/20 blur-3xl pointer-events-none" />
-
-        <div className="flex items-center space-x-2 text-xs font-bold text-glow-warm uppercase tracking-wider mb-2">
-          <Eye className="w-4 h-4 text-glow-amber" />
-          <span>The Invisible Resident Revealed</span>
+      <div
+        className="w-full max-w-md rounded-2xl p-6 sm:p-8"
+        style={{
+          background: 'rgba(37,52,59,0.97)',
+          border: `1px solid ${accent}30`,
+          boxShadow: '0 20px 60px rgba(10,15,25,0.5)',
+        }}
+      >
+        <div className="flex items-center gap-2 mb-3" style={{ color: accent }}>
+          <Eye className="w-4 h-4" />
+          <span className="text-[10px] font-sans tracking-widest uppercase">The Invisible Resident Revealed</span>
         </div>
 
-        <h2 id="reveal-title" className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight mb-2">
+        <h2
+          id="reveal-title"
+          className="font-display font-light italic mb-2"
+          style={{ fontSize: 'clamp(1.4rem, 4vw, 1.9rem)', color: '#F6F3EB', letterSpacing: '-0.01em' }}
+        >
           {reveal.title}
         </h2>
 
-        <p className="text-xs sm:text-sm text-slate-300 mb-4">
-          The first route worked for the initial traveler. But when night deepened, a previously overlooked resident emerged—facing an environmental barrier built into the city.
+        <p className="text-sm font-sans mb-5" style={{ color: 'rgba(221,215,203,0.65)' }}>
+          The first route worked — but a second resident faces barriers the city never designed around.
         </p>
 
-        {/* Narrative dialogue bubble with new resident portrait */}
-        <div className="flex items-start space-x-4 p-4 rounded-2xl bg-midnight-950/80 border border-midnight-800 mb-4 shadow-inner">
-          <CharacterAvatar
-            avatarKey={invisibleResident.avatarKey}
-            size={60}
-            alt={`${invisibleResident.name} portrait`}
-          />
+        {/* Character dialogue */}
+        <div
+          className="flex items-start gap-4 p-4 rounded-xl mb-4"
+          style={{ background: 'rgba(246,243,235,0.04)', border: '1px solid rgba(221,215,203,0.08)' }}
+        >
+          <div
+            className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center font-display text-lg font-light italic"
+            style={{ background: `${accent}20`, color: accent, border: `1px solid ${accent}30` }}
+          >
+            {invisibleResident.name.charAt(0)}
+          </div>
           <div className="flex-1">
-            <div className="flex items-center space-x-1.5">
-              <span className="font-bold text-slate-100 text-sm">{invisibleResident.name}</span>
-              <span className="text-xs text-glow-soft font-mono">({invisibleResident.role})</span>
+            <div className="flex items-baseline gap-2 mb-1">
+              <span className="text-sm font-sans font-semibold" style={{ color: '#F6F3EB' }}>
+                {invisibleResident.name}
+              </span>
+              <span className="text-xs font-sans" style={{ color: 'rgba(221,215,203,0.45)' }}>
+                {invisibleResident.role}
+              </span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-300 italic mt-1.5 leading-relaxed">
-              "{reveal.text}"
+            <p className="text-sm font-sans leading-relaxed italic" style={{ color: 'rgba(221,215,203,0.8)' }}>
+              &ldquo;{reveal.text}&rdquo;
             </p>
           </div>
         </div>
 
-        {/* Identified environmental barrier alert */}
-        <div className="p-3.5 rounded-xl bg-red-950/50 border border-red-500/50 mb-4">
-          <div className="flex items-center space-x-2 text-red-400 font-semibold text-xs mb-1">
-            <ShieldAlert className="w-4 h-4" />
-            <span>Environmental Barrier Identified:</span>
+        {/* Barrier */}
+        <div
+          className="p-3.5 rounded-xl mb-3"
+          style={{ background: 'rgba(200,125,112,0.1)', border: '1px solid rgba(200,125,112,0.2)' }}
+        >
+          <div className="flex items-center gap-2 mb-1" style={{ color: '#C87D70' }}>
+            <ShieldAlert className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-sans tracking-wider uppercase font-semibold">Barrier Identified</span>
           </div>
-          <p className="text-xs sm:text-sm text-red-200 font-medium leading-normal">
-            {reveal.barrierIdentified}
+          <p className="text-sm font-sans leading-relaxed" style={{ color: 'rgba(221,215,203,0.8)' }}>
+            {friendlyText(reveal.barrierIdentified)}
           </p>
         </div>
 
-        {/* New inclusive goal */}
-        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/50 mb-6">
-          <div className="flex items-center space-x-2 text-emerald-400 font-semibold text-xs mb-1">
-            <Sparkles className="w-4 h-4" />
-            <span>Universal Design Challenge:</span>
+        {/* New goal */}
+        <div
+          className="p-3.5 rounded-xl mb-6"
+          style={{ background: 'rgba(141,155,135,0.1)', border: '1px solid rgba(141,155,135,0.2)' }}
+        >
+          <div className="flex items-center gap-2 mb-1" style={{ color: '#8D9B87' }}>
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-sans tracking-wider uppercase font-semibold">New Objective</span>
           </div>
-          <p className="text-xs sm:text-sm text-emerald-100 font-medium leading-normal">
-            {reveal.newObjective}
+          <p className="text-sm font-sans leading-relaxed" style={{ color: 'rgba(221,215,203,0.8)' }}>
+            {friendlyText(reveal.newObjective)}
           </p>
         </div>
 
@@ -86,9 +109,12 @@ export const RevealModal: React.FC = () => {
           onClick={acknowledgeReveal}
           autoFocus
           data-testid="acknowledge-reveal-button"
-          className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold text-sm sm:text-base tracking-wide flex items-center justify-center space-x-2 shadow-lantern transition-all"
+          className="w-full py-3 px-6 rounded-xl font-sans font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all duration-150"
+          style={{ background: '#8D9B87', color: '#F6F3EB', boxShadow: '0 4px 16px rgba(141,155,135,0.3)' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#7A8A78'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#8D9B87'; }}
         >
-          <span>Redesign City Pathways Inclusively</span>
+          Redesign for Everyone
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

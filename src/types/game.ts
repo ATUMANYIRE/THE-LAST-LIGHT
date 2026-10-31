@@ -24,6 +24,8 @@ export type ToolId =
   | 'streetlamp'
   | 'demolish';
 
+export type Coordinate = { x: number; y: number };
+
 export type MobilityCategory =
   | 'walker'
   | 'wheelchair'
@@ -143,4 +145,20 @@ export interface HistoryAction {
   tileBefore: GridTile;
   tileAfter: GridTile;
   costDelta: number;
+}
+
+export interface SerializedGameState {
+  version: 1;
+  timestamp: number;
+  chapterId: number;
+  phase: 'initial' | 'post_reveal';
+  budget: number;
+  tiles: GridTile[];
+  activeResidentIds: string[];
+  revealedInvisibleResident: boolean;
+  selectedTool: ToolId;
+  unlockedChapters: number[];
+  completedChapters: number[];
+  history: HistoryAction[];
+  redoStack: HistoryAction[];
 }

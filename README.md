@@ -1,163 +1,87 @@
-# THE LAST LIGHT: The Invisible Resident
+# THE LAST LIGHT — The Invisible Resident
 
-> **A city isn't truly connected until everyone can find their way home.**  
-> Built for the **Girls Who Code HHS Hackathon 2026** ($50 First Place Prize).
+> A city is not truly connected until everyone can find their way home.
 
-[![Production Build](https://img.shields.io/badge/Build-Passing-10b981?style=flat-square&logo=nextdotjs)](.)
-[![Tests](https://img.shields.io/badge/Vitest-12%2F12%20Passed-10b981?style=flat-square&logo=vitest)](docs/TESTING.md)
-[![E2E Tests](https://img.shields.io/badge/Playwright-16%2F16%20Passed-10b981?style=flat-square&logo=playwright)](docs/TESTING.md)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Strict%20Mode-3178c6?style=flat-square&logo=typescript)](tsconfig.json)
-[![Accessibility](https://img.shields.io/badge/Accessibility-Independently%20Audited-10b981?style=flat-square)](docs/TESTING.md)
-[![License](https://img.shields.io/badge/License-MIT-334155?style=flat-square)](LICENSE)
+An inclusive city-design puzzle made for the Girls Who Code HHS Hackathon 2026. Walk through three neighborhoods, improve routes within a budget, and test whether each resident can reach their destination. The first route that works may still leave a neighbor behind.
 
----
+![THE LAST LIGHT cover, composed from actual Chapter 3 gameplay](docs/images/cover.png)
 
-## What is THE LAST LIGHT?
+## See the game
 
-Continuous city infrastructure is often designed exclusively for the "average" pedestrian: agile, fully sighted, daylight walkers with boundless endurance. 
+All images below are captures from the running game.
 
-**THE LAST LIGHT** is a social-impact puzzle game that models the real-world consequences of urban planning through an innovative gameplay mechanic: **The Invisible Resident**.
+| Explore as Maya | Build a shortcut |
+| --- | --- |
+| ![Maya walking through the Old Clocktower Quarter in Explore Mode](docs/images/explore.png) | ![Chapter 1 Design Mode board with paved walkway tiles and budget](docs/images/design-shortcut.png) |
 
-1. **Phase 1: The Initial Route**: The player connects homes to essential destinations (the community library, clinic, or shelter) across a miniature nighttime city grid.
-2. **The Turn: The Invisible Resident Emerges**: Just as celebration bells ring, night falls deeper. A previously uncounted resident appears on the street:
-   - In **Chapter 1**, **Sam** (a manual wheelchair user) tries to use the player's shortcut—only to be trapped by an unramped 3-step sunken stone alley.
-   - In **Chapter 2**, **Elena** (a botanist navigating with a long white cane) arrives at an arterial roadway, stranded by silent electric traffic and a lack of audible signals and tactile ground guides.
-   - In **Chapter 3**, **Mr. Henderson** (a 78-year-old elder with cardiopulmonary fatigue) faces an 8-block blackout corridor without a single resting bench.
-3. **Phase 2: Universal Redesign**: The player unlocks **Universal Design tools** (Modular Ramps, Tactile Blister Pavers, Acoustic Pedestrian Signals, Warm Luminaries, Resting Benches) and must redesign the neighborhood under a civic budget so that *everyone* gets home safely.
+| Discover Sam's barrier | Redesign the silent crossing |
+| --- | --- |
+| ![Sam reveals that the stepped shortcut blocks wheelchair access](docs/images/sam-reveal.png) | ![Chapter 2 board with tactile paving and an acoustic beacon](docs/images/silent-crossing.png) |
 
-> **The Social Model of Disability**: Our game never frames disability as an individual defect to be cured. The problem is the built environment and its exclusionary barriers.
+| Light the blackout route | Finish all three chapters |
+| --- | --- |
+| ![Chapter 3 board with lights, a ramp, and a route through the blackout](docs/images/blackout-route.png) | ![Grand Finale showing 3 districts, 5 unique residents, and 7 successful journeys](docs/images/grand-finale.png) |
 
----
+Mobile Explore Mode has on-screen movement controls:
 
-## The Three Chapters
+![Mobile-sized gameplay with a directional movement pad](docs/images/mobile-controls.png)
 
-| Chapter | District | Initial Resident | Invisible Resident | Barrier & Learning Principle |
-|:---|:---|:---|:---|:---|
-| **Ch. 1: The Shortcut** | Old Clocktower Quarter | Maya (Pedestrian Student) | Sam (Manual Wheelchair User) | **Sunken 3-Step Stairs**. *Equitable Use: The fastest route is not accessible to everyone.* |
-| **Ch. 2: The Silent Crossing** | Neon Market & Avenue | Kai (Sensory-Sensitive Student) | Elena (Low-Vision White Cane User) | **Silent Road Crossing**. *Perceptible Information: Redundancy through sound, touch, and sight.* |
-| **Ch. 3: One Light Left** | St. Jude Civic Common | Maya & Sam (Pedestrians/Wheels) | Mr. Henderson (Cardiopulmonary Fatigue) | **Rolling Blackout & Exhaustion**. *Low Physical Effort: Public seating and lighting are essential life infrastructure.* |
+## How to play
 
----
+1. Enter your name, read the short introduction, and begin Chapter 1. A tutorial explains the basic loop. The **How to Play** control remains available during the game.
+2. In **Explore Mode**, walk with **WASD** or the **arrow keys**. Hold **Shift** to jog, drag the mouse to change camera direction, and use **Reset Camera** when needed. On a touch screen, hold the directional pad; two directions can be held together.
+3. Switch to **Design Mode** with **Tab** while the world or board has focus, or use the on-screen mode button. Select a tool, place improvements on the board, and watch the budget.
+4. Select **Test Route** to watch a resident's journey. Read the result, including any failed route explanation. A newly revealed resident may need a different solution.
+5. Make the route work for everyone in that chapter, then continue to the next district.
 
-## Inclusive Design & Audited Accessibility Features
+Movement stops when a blocking dialog opens, while entering text, and when leaving Explore Mode. Progress is saved locally in the browser; chapters can be replayed.
 
-The game itself embodies the very inclusive principles it teaches. During our independent release audit, the following accessibility features were implemented and programmatically verified:
+## The three chapters
 
-- **Full Keyboard Navigation (Verified)**: Complete playable experience without mouse interaction. Navigate tiles with `Arrow Keys` or `WASD`, place infrastructure with `Space` or `Enter`, switch tools with `1`-`6`, undo with `Ctrl+Z`, and reset with `R`.
-- **Screen Reader Parity (Verified)**: Accessible DOM grid with `role="grid"` and interactive cell buttons, accompanied by dynamic `aria-live="polite"` status announcements reporting tile coordinates, lighting, elevation, municipal budget, and path traversal results.
-- **High-Contrast Mode (Verified)**: Stark yellow (`#FFFF00`) and cyan (`#00FFFF`) on deep pitch-black (`#000000`), yielding a **19.56:1 contrast ratio** (far exceeding the WCAG AAA 7:1 threshold).
-- **Reduced Motion (Verified)**: CSS-enforced suppression of camera pans, lantern pulses, and animated transforms (`animation-duration: 0.001ms !important`).
-- **Procedural Sound & Visual Captions (Verified)**: Native Web Audio synthesizer paired with an on-screen visual toast displaying textual captions for all sound signals.
-- **No Color-Only Information (Verified)**: Every tile, resident avatar, and barrier is distinguished by high-contrast geometric icons, textual labels, and borders.
+| Chapter | Residents | Design challenge |
+| --- | --- | --- |
+| **The Shortcut** | Maya and Sam | Connect the Library and remove a stair barrier with an accessible route. |
+| **The Silent Crossing** | Kai and Elena | Add tactile paving and an acoustic beacon to make the crossing usable. |
+| **One Light Left** | Maya, Sam, and Mr Henderson | Improve a blackout route with light, access, and places to rest. |
 
-> [!NOTE]
-> *Audit Scope Transparency*: Automated ARIA attributes, keyboard control flows, contrast ratios, and dialog semantics have been verified with 100% pass rate in Playwright. Real-world end-user testing with physical Braille refreshable displays or third-party screen reader voice engines (e.g. JAWS, NVDA) remains designated as unverified real-device testing.
+The Grand Finale counts **5 unique residents** and **7 successful journeys** across **3 districts**. A resident appearing in more than one chapter counts once as a person and once per successful chapter journey.
 
----
+## Run locally
 
-## Technology Stack
+Requirements: Node.js 18.18+ and npm. The release checks were run on Node.js 24.
 
-- **Framework**: [Next.js 15](https://nextjs.org/) (App Router, Static Export ready)
-- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict Mode)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **State Architecture**: [Zustand](https://github.com/pmndrs/zustand)
-- **Audio Engine**: Native Web Audio API procedural synthesizer (zero external audio file dependencies)
-- **Testing**: [Vitest](https://vitest.dev/) (Deterministic pathfinding and level solvability suite)
-
----
-
-## Quickstart Guide
-
-### Prerequisites
-- Node.js 18+ (tested on Node v24.12.0)
-- npm 9+
-
-### 1. Installation
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/the-last-light.git
-cd the-last-light
-
-# Install dependencies
 npm install
-```
-
-### 2. Launch Local Development Server
-```bash
 npm run dev
 ```
-Open [http://localhost:3005](http://localhost:3005) in your web browser.
 
-### 3. Run Automated Tests
-```bash
-# Run deterministic engine unit tests (Vitest)
-npm test
+Open [http://localhost:3005](http://localhost:3005). To test a production build:
 
-# Run full browser end-to-end tests across desktop and mobile (Playwright)
-npm run test:e2e
-```
-
-### 4. Build for Production
 ```bash
 npm run build
 npm run start
 ```
 
----
+## Verify
 
-## Project Structure
-
-```
-THE-LAST-LIGHT/
-├── docs/
-│   ├── GAME_DESIGN.md            # Complete game design and educational narrative
-│   ├── ARCHITECTURE.md           # Architecture, data models, and extensibility guide
-│   ├── TESTING.md                # Verification report and test suites breakdown
-│   └── IMPLEMENTATION_STATUS.md  # Milestones progress and Go/No-Go release verdict
-├── src/
-│   ├── app/
-│   │   ├── globals.css           # Design tokens, accessibility high-contrast styles
-│   │   ├── layout.tsx            # HTML document wrapper with metadata
-│   │   └── page.tsx              # Main game layout and keyboard listeners
-│   ├── components/
-│   │   ├── game/
-│   │   │   ├── CharacterAvatar.tsx # Procedural SVG character portraits
-│   │   │   ├── GameBoard.tsx       # 2.5D visual board & accessible DOM grid
-│   │   │   ├── ResidentCard.tsx    # Active travelers and environmental needs
-│   │   │   └── ToolPalette.tsx     # Infrastructure building tools
-│   │   ├── layout/
-│   │   │   ├── AudioCaptions.tsx   # Deaf/hard-of-hearing caption toaster
-│   │   │   └── Header.tsx          # Chapter, district, and municipal budget bar
-│   │   └── modals/
-│   │       ├── ChapterSelectModal.tsx # Chapter selection and unlock progression
-│   │       ├── FailureModal.tsx       # Respectful accessibility barrier guidance
-│   │       ├── HelpModal.tsx          # Keyboard controls & Universal Design guide
-│   │       ├── IntroModal.tsx         # Story introductions
-│   │       ├── RevealModal.tsx        # The signature Invisible Resident Reveal
-│   │       ├── SettingsModal.tsx      # High contrast, sound, and motion toggles
-│   │       └── VictoryModal.tsx       # Celebration & Universal Design takeaway
-│   ├── engine/
-│   │   ├── __tests__/
-│   │   │   ├── gameplay.test.ts    # Solvability & budget accounting suite
-│   │   │   └── pathfinding.test.ts # A* pathfinding & mobility constraints suite
-│   │   ├── audio.ts                # Web Audio API sound synthesizer
-│   │   ├── levels.ts               # Chapters 1, 2, 3 level definitions
-│   │   └── pathfinding.ts          # Deterministic A* routing & constraint validation
-│   ├── store/
-│   │   └── gameStore.ts            # Zustand game state, undo/redo, persistence
-│   ├── types/
-│   │   └── game.ts                 # TypeScript domain definitions
-│   └── utils/
-│       └── confetti.ts             # Lightweight zero-dependency celebration burst
-├── package.json
-├── PROGRESS.md                   # Milestone verification log
-├── tailwind.config.ts
-├── tsconfig.json
-└── vitest.config.ts
+```bash
+npm run typecheck
+npm run lint
+npm test -- --reporter=verbose
 ```
 
----
+`npm run lint` currently runs TypeScript checking; there is no separate ESLint command. For browser tests, start one development server with `npm run dev -- --port 3007`, wait for its first compile, then run:
 
-## License
+```bash
+npx playwright test --config=playwright.dev.config.ts --reporter=list --workers=1
+```
 
-MIT License. Built with pride for the Girls Who Code HHS Hackathon 2026.
+The final local release pass recorded **52 passing unit tests**, **15 passing development browser tests**, **2 passing desktop/mobile production smoke tests**, a successful production build, and a visible-UI playthrough of all three chapters. Browser tests use real keyboard and touch input; the development-only movement diagnostic reads position for assertions and is absent from production. The ten-minute production soak completed 107 gameplay cycles with no browser errors. Longer memory and independent novice-player studies remain useful follow-up work.
+
+## Technology and accessibility
+
+Next.js 15, React 19, TypeScript, React Three Fiber, Three.js, Zustand, Tailwind CSS, Vitest, and Playwright. The game combines a third-person neighborhood view with a keyboard-accessible design board. It includes a mobile movement pad, visible focus handling, high contrast and reduced motion settings, captions for sound cues, and route failure explanations. Automated checks do not replace testing with people who use assistive technology.
+
+## AI-assisted development
+
+This project used AI coding assistants substantially, including Claude Code and OpenAI Codex, for implementation, debugging, tests, review, and release preparation. Gameplay results and the demo were verified through real browser interaction without injecting winning state.

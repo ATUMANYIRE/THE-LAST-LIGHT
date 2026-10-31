@@ -3,18 +3,12 @@
 import React, { useEffect } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { triggerConfetti } from '../../utils/confetti';
-import { Trophy, CheckCircle2, ArrowRight, BookOpen, RotateCcw } from 'lucide-react';
+import { CheckCircle2, ArrowRight, BookOpen, RotateCcw } from 'lucide-react';
 
 export const VictoryModal: React.FC = () => {
   const {
-    currentChapter,
-    showVictoryModal,
-    nextChapter,
-    resetLevel,
-    closeModals,
-    budget,
-    currentChapterId,
-    settings,
+    currentChapter, showVictoryModal, nextChapter, resetLevel,
+    budget, currentChapterId, settings,
   } = useGameStore();
 
   useEffect(() => {
@@ -28,77 +22,105 @@ export const VictoryModal: React.FC = () => {
   const complete = currentChapter.dialogues.complete;
   const isFinalChapter = currentChapterId >= 3;
 
+  const chapterBg = currentChapter.chapterNumber === 1 ? '#B59A67'
+    : currentChapter.chapterNumber === 2 ? '#C87D70'
+    : '#8D9B87';
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-midnight-950/85 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="victory-title"
       data-testid="victory-modal"
+      style={{ background: 'rgba(20,31,42,0.82)', backdropFilter: 'blur(6px)' }}
     >
-      <div className="w-full max-w-lg bg-midnight-900 border-2 border-emerald-500/80 rounded-3xl p-5 sm:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-emerald-500/15 blur-3xl pointer-events-none" />
-
-        <div className="flex items-center space-x-2 text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2">
-          <Trophy className="w-4 h-4" />
-          <span>Chapter {currentChapter.chapterNumber} Complete!</span>
+      <div
+        className="w-full max-w-md rounded-2xl p-6 sm:p-8"
+        style={{
+          background: 'rgba(37,52,59,0.97)',
+          border: `1px solid ${chapterBg}30`,
+          boxShadow: '0 20px 60px rgba(10,15,25,0.5)',
+        }}
+      >
+        <div className="flex items-center gap-2 mb-3" style={{ color: chapterBg }}>
+          <CheckCircle2 className="w-4 h-4" />
+          <span className="text-[10px] font-sans tracking-widest uppercase">
+            Chapter {currentChapter.chapterNumber} Complete
+          </span>
         </div>
 
-        <h2 id="victory-title" className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight mb-2">
+        <h2
+          id="victory-title"
+          className="font-display font-light italic mb-2"
+          style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', color: '#F6F3EB', letterSpacing: '-0.01em' }}
+        >
           {complete.title}
         </h2>
 
-        <p className="text-xs sm:text-sm text-slate-300 mb-4">
+        <p className="text-sm font-sans mb-5" style={{ color: 'rgba(221,215,203,0.7)' }}>
           {complete.celebration}
         </p>
 
-        {/* Civics stats */}
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className="p-3 rounded-xl bg-midnight-950/70 border border-midnight-800 text-center">
-            <span className="text-[11px] uppercase tracking-wider text-slate-400 block">
-              Residents Connected
-            </span>
-            <span className="text-lg font-mono font-black text-emerald-400">
-              {currentChapter.residents.length} / {currentChapter.residents.length}
-            </span>
-          </div>
-          <div className="p-3 rounded-xl bg-midnight-950/70 border border-midnight-800 text-center">
-            <span className="text-[11px] uppercase tracking-wider text-slate-400 block">
-              Remaining Budget
-            </span>
-            <span className="text-lg font-mono font-black text-glow-amber">
-              ${budget}
-            </span>
-          </div>
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-3 mb-5">
+          {[
+            { label: 'Residents Connected', value: `${currentChapter.residents.length}/${currentChapter.residents.length}`, color: '#8D9B87' },
+            { label: 'Budget Remaining', value: `$${budget}`, color: chapterBg },
+          ].map(({ label, value, color }) => (
+            <div
+              key={label}
+              className="p-3 rounded-xl text-center"
+              style={{ background: 'rgba(246,243,235,0.05)', border: '1px solid rgba(221,215,203,0.08)' }}
+            >
+              <span className="text-[9px] font-sans tracking-widest uppercase block mb-1" style={{ color: 'rgba(221,215,203,0.45)' }}>
+                {label}
+              </span>
+              <span className="text-lg font-display font-light" style={{ color }}>{value}</span>
+            </div>
+          ))}
         </div>
 
-        {/* Universal Design Takeaway box */}
-        <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 mb-6">
-          <div className="flex items-center space-x-2 text-emerald-400 font-semibold text-xs mb-1">
-            <BookOpen className="w-4 h-4" />
-            <span>Inclusive Design Takeaway:</span>
+        {/* Takeaway */}
+        <div
+          className="p-4 rounded-xl mb-6"
+          style={{ background: `${chapterBg}15`, border: `1px solid ${chapterBg}25` }}
+        >
+          <div className="flex items-center gap-2 mb-1.5" style={{ color: chapterBg }}>
+            <BookOpen className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-sans tracking-wider uppercase font-semibold">
+              Inclusive Design Takeaway
+            </span>
           </div>
-          <p className="text-xs sm:text-sm text-emerald-100 font-medium leading-relaxed">
+          <p className="text-sm font-sans leading-relaxed" style={{ color: 'rgba(221,215,203,0.8)' }}>
             {complete.inclusiveTakeaway}
           </p>
         </div>
 
-        {/* Action buttons */}
-        <div className="flex items-center space-x-3">
+        {/* Actions */}
+        <div className="flex items-center gap-3">
           <button
             onClick={resetLevel}
-            className="py-3 px-4 rounded-xl bg-midnight-800 hover:bg-midnight-700 border border-midnight-600 text-slate-300 font-semibold text-xs transition"
+            className="flex items-center gap-1.5 py-2.5 px-4 rounded-xl font-sans text-sm cursor-pointer transition-all duration-150"
+            style={{
+              background: 'rgba(246,243,235,0.07)',
+              color: 'rgba(221,215,203,0.7)',
+              border: '1px solid rgba(221,215,203,0.1)',
+            }}
           >
-            <RotateCcw className="w-4 h-4 inline mr-1" />
+            <RotateCcw className="w-3.5 h-3.5" />
             Replay
           </button>
           <button
             onClick={nextChapter}
             autoFocus
             data-testid="victory-continue-button"
-            className="flex-1 py-3 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold text-sm tracking-wide flex items-center justify-center space-x-2 shadow-lantern transition-all"
+            className="flex-1 flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-sans font-semibold text-sm cursor-pointer transition-all duration-150"
+            style={{ background: chapterBg, color: '#F6F3EB', boxShadow: `0 4px 16px ${chapterBg}40` }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = '0.9'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
           >
-            <span>{isFinalChapter ? 'View Grand Finale' : 'Continue to Next Chapter'}</span>
+            {isFinalChapter ? 'View Grand Finale' : 'Continue to Chapter ' + (currentChapter.chapterNumber + 1)}
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

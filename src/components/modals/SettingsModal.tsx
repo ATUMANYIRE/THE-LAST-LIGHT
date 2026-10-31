@@ -1,20 +1,34 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { Settings, X, Eye, Volume2, Type, Activity, Subtitles } from 'lucide-react';
+import { Settings, X, Eye, Volume2, Type, Activity, Subtitles, User, Check } from 'lucide-react';
 
 export const SettingsModal: React.FC = () => {
   const {
     showSettingsModal,
     openSettings,
     settings,
+    playerName,
+    setPlayerName,
     toggleHighContrast,
     toggleReducedMotion,
     toggleSound,
     toggleCaptions,
     toggleLargeText,
   } = useGameStore();
+
+  const [nameInput, setNameInput] = useState(playerName);
+  const [nameSaved, setNameSaved] = useState(false);
+
+  const handleSaveName = () => {
+    const trimmed = nameInput.trim().slice(0, 40);
+    if (trimmed.length >= 1) {
+      setPlayerName(trimmed);
+      setNameSaved(true);
+      setTimeout(() => setNameSaved(false), 1800);
+    }
+  };
 
   if (!showSettingsModal) return null;
 
@@ -196,10 +210,49 @@ export const SettingsModal: React.FC = () => {
           </div>
         </div>
 
+        {/* Change Player Name */}
+        <div className="mt-5 p-3 rounded-xl bg-midnight-950/70 border border-midnight-800">
+          <div className="flex items-center gap-2 mb-2">
+            <User className="w-4 h-4 text-slate-400 shrink-0" />
+            <span className="text-xs font-semibold text-slate-200">Change Your Name</span>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={nameInput}
+              onChange={e => { setNameInput(e.target.value.slice(0, 40)); setNameSaved(false); }}
+              onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); }}
+              maxLength={40}
+              placeholder="Your name"
+              aria-label="Change player name"
+              className="flex-1 rounded-lg px-3 py-1.5 text-xs font-sans"
+              style={{
+                background: 'rgba(246,243,235,0.06)',
+                border: '1px solid rgba(221,215,203,0.14)',
+                color: '#F6F3EB',
+                outline: 'none',
+              }}
+            />
+            <button
+              onClick={handleSaveName}
+              disabled={nameInput.trim().length === 0}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition shrink-0"
+              style={{
+                background: nameSaved ? 'rgba(141,155,135,0.8)' : 'rgba(200,125,112,0.85)',
+                color: '#F6F3EB',
+                cursor: nameInput.trim().length === 0 ? 'not-allowed' : 'pointer',
+                opacity: nameInput.trim().length === 0 ? 0.5 : 1,
+              }}
+            >
+              {nameSaved ? <><Check className="w-3 h-3" /> Saved</> : 'Save'}
+            </button>
+          </div>
+        </div>
+
         <button
           onClick={() => openSettings(false)}
           data-testid="close-settings-button"
-          className="w-full mt-6 py-2.5 px-4 rounded-xl bg-midnight-800 hover:bg-midnight-700 text-slate-200 font-semibold text-xs border border-midnight-600 transition"
+          className="w-full mt-4 py-2.5 px-4 rounded-xl bg-midnight-800 hover:bg-midnight-700 text-slate-200 font-semibold text-xs border border-midnight-600 transition"
         >
           Save & Close Settings
         </button>

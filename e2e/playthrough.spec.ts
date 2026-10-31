@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const SCREENSHOT_DIR = path.join(process.cwd(), 'e2e', 'screenshots');
+const SCREENSHOT_DIR = path.join(process.cwd(), 'artifacts', 'release-audit');
 
 test.beforeAll(() => {
   if (!fs.existsSync(SCREENSHOT_DIR)) {
@@ -12,9 +12,21 @@ test.beforeAll(() => {
 
 test.describe('THE LAST LIGHT: Complete 3-Chapter Independent Playthrough & Audit', () => {
   test('Complete Chapter 1, Chapter 2, Chapter 3 and Grand Finale via actual UI interactions', async ({ page }) => {
+    test.setTimeout(300000);
     // Navigate to game
     await page.goto('/');
     await expect(page).toHaveTitle(/THE LAST LIGHT/i);
+
+    // Follow the same visible startup sequence as a first-time player.
+    const nameScreen = page.getByTestId('player-name-screen');
+    await expect(nameScreen).toBeVisible();
+    await expect(page.getByTestId('begin-journey-button')).toBeDisabled();
+    await page.getByRole('textbox', { name: 'Your name' }).fill('Tester');
+    await page.getByTestId('begin-journey-button').click();
+    await expect(page.getByTestId('gameplay-loop-modal')).toBeVisible();
+    await page.getByTestId('loop-begin-button').click();
+    await expect(page.getByTestId('title-screen')).toBeVisible();
+    await page.getByTestId('enter-3d-world-button').click();
 
     const runSim = async () => {
       const btn = page.getByTestId('run-simulation-button');
@@ -35,6 +47,11 @@ test.describe('THE LAST LIGHT: Complete 3-Chapter Independent Playthrough & Audi
     // Begin Chapter 1
     await page.getByTestId('begin-chapter-button').click({ force: true });
     await expect(introModal).toBeHidden();
+    await expect(page.getByRole('dialog', { name: 'Tutorial' })).toBeVisible();
+    await page.getByRole('button', { name: 'Skip tutorial' }).click();
+    await page.getByRole('button', { name: 'Switch to Design Mode' }).click();
+    await page.getByTestId('view-mode-button').click();
+    await expect(page.getByRole('grid', { name: /The Shortcut City Board/i })).toBeVisible();
 
     // Verify initial budget: $150
     const budgetDisplay = page.getByTestId('budget-display');
@@ -85,7 +102,7 @@ test.describe('THE LAST LIGHT: Complete 3-Chapter Independent Playthrough & Audi
     // Wait for Chapter 1 Victory Modal
     const victoryModal = page.getByTestId('victory-modal');
     await expect(victoryModal).toBeVisible({ timeout: 6000 });
-    await expect(victoryModal).toContainText('Chapter 1 Complete!');
+    await expect(victoryModal).toContainText('Chapter 1 Complete');
     await expect(victoryModal).toContainText('Clocktower Quarter Connected!');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '05-ch1-victory.png') });
 
@@ -107,6 +124,14 @@ test.describe('THE LAST LIGHT: Complete 3-Chapter Independent Playthrough & Audi
 
     // Verify starting budget: $190
     await expect(budgetDisplay).toContainText('$190');
+    await page.getByTestId('view-mode-button').click();
+    await page.getByRole('button', { name: 'Switch to Explore Mode' }).click();
+    await page.keyboard.down('w');
+    await page.waitForTimeout(450);
+    await page.keyboard.up('w');
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06b-ch2-explore-kai.png') });
+    await page.getByRole('button', { name: 'Switch to Design Mode' }).click();
+    await page.getByTestId('view-mode-button').click();
 
     // Connect Kai across Neon Avenue: (2, 2), (3, 2), (5, 2), (6, 2)
     await page.getByTestId('tool-paved_walkway').click();
@@ -159,7 +184,7 @@ test.describe('THE LAST LIGHT: Complete 3-Chapter Independent Playthrough & Audi
 
     // Wait for Chapter 2 Victory
     await expect(victoryModal).toBeVisible({ timeout: 6000 });
-    await expect(victoryModal).toContainText('Chapter 2 Complete!');
+    await expect(victoryModal).toContainText('Chapter 2 Complete');
     await expect(victoryModal).toContainText('Avenue Crossing Made Inclusive!');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '10-ch2-victory.png') });
 
@@ -180,6 +205,14 @@ test.describe('THE LAST LIGHT: Complete 3-Chapter Independent Playthrough & Audi
 
     // Verify starting budget: $240
     await expect(budgetDisplay).toContainText('$240');
+    await page.getByTestId('view-mode-button').click();
+    await page.getByRole('button', { name: 'Switch to Explore Mode' }).click();
+    await page.keyboard.down('w');
+    await page.waitForTimeout(450);
+    await page.keyboard.up('w');
+    await page.screenshot({ path: path.join(SCREENSHOT_DIR, '11b-ch3-explore-maya.png') });
+    await page.getByRole('button', { name: 'Switch to Design Mode' }).click();
+    await page.getByTestId('view-mode-button').click();
 
     // Build central corridor on row 3:
     // Place streetlamp at (5, 3) to light blackout center
@@ -226,7 +259,7 @@ test.describe('THE LAST LIGHT: Complete 3-Chapter Independent Playthrough & Audi
 
     // Wait for Chapter 3 Victory
     await expect(victoryModal).toBeVisible({ timeout: 6000 });
-    await expect(victoryModal).toContainText('Chapter 3 Complete!');
+    await expect(victoryModal).toContainText('Chapter 3 Complete');
     await expect(victoryModal).toContainText('The City Fully Illuminated!');
     await expect(page.getByTestId('victory-continue-button')).toContainText('View Grand Finale');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '15-ch3-victory.png') });
@@ -239,11 +272,13 @@ test.describe('THE LAST LIGHT: Complete 3-Chapter Independent Playthrough & Audi
     // Assert Finale Modal appears
     const finaleModal = page.getByTestId('finale-modal');
     await expect(finaleModal).toBeVisible({ timeout: 6000 });
-    await expect(finaleModal).toContainText('Universal City Achieved');
+    await expect(finaleModal).toContainText('Congratulations, Tester!');
     await expect(finaleModal).toContainText('Districts Connected');
     await expect(finaleModal).toContainText('3 / 3');
-    await expect(finaleModal).toContainText('Neighbors Empowered');
-    await expect(finaleModal).toContainText('6 / 6');
+    await expect(finaleModal).toContainText('Unique Neighbors Empowered');
+    await expect(finaleModal).toContainText('5 / 5');
+    await expect(finaleModal).toContainText('Successful Journeys');
+    await expect(finaleModal).toContainText('7 / 7');
     await expect(finaleModal).toContainText('Barriers Eliminated');
     await expect(finaleModal).toContainText('100%');
     await expect(finaleModal).toContainText('Girls Who Code HHS Hackathon 2026');

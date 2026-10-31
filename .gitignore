@@ -11,6 +11,10 @@
 /videos/
 *.webm
 *.mp4
+!/public/cinematics/opening.mp4
+/artifacts/
+/scripts/.vendor/
+__pycache__/
 
 # next.js
 /.next/

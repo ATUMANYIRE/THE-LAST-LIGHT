@@ -1,17 +1,44 @@
 import { test, expect } from '@playwright/test';
 import * as path from 'path';
+import * as fs from 'fs';
 
-const SCREENSHOT_DIR = path.join(process.cwd(), 'e2e', 'screenshots');
+const SCREENSHOT_DIR = path.join(process.cwd(), 'artifacts', 'release-audit');
+fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+
+const skipCinematic = async (page: any) => {
+  await page.getByTestId('enter-3d-world-button').click();
+};
+const dismissTutorial = async (page: any) => {
+  await expect(page.getByRole('dialog', { name: 'Tutorial' })).toBeVisible();
+  await page.getByRole('button', { name: 'Skip tutorial' }).click();
+};
+const showDesignBoard = async (page: any) => {
+  await page.getByRole('button', { name: 'Switch to Design Mode' }).click();
+  await page.getByTestId('view-mode-button').click();
+  await expect(page.getByRole('grid')).toBeVisible();
+};
 
 test.describe('THE LAST LIGHT: Controls, Accessibility Toggles, Persistence & Edge Cases', () => {
+  // Pre-seed localStorage so PlayerNameScreen and GameplayLoopModal don't block tests
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('tll_player_name', 'Tester');
+      localStorage.setItem('tll_loop_seen', '1');
+    });
+  });
+
   test('Keyboard navigation, tool placement, undo, and reset', async ({ page }) => {
+    test.setTimeout(180000);
     await page.goto('/');
+    await skipCinematic(page);
 
     // Dismiss intro modal via Escape key
     const introModal = page.getByTestId('intro-modal');
     await expect(introModal).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(introModal).toBeHidden();
+    await dismissTutorial(page);
+    await showDesignBoard(page);
 
     const budgetDisplay = page.getByTestId('budget-display');
     await expect(budgetDisplay).toContainText('$150');
@@ -20,6 +47,7 @@ test.describe('THE LAST LIGHT: Controls, Accessibility Toggles, Persistence & Ed
     await page.keyboard.press('1');
     const pavedTool = page.getByTestId('tool-paved_walkway');
     await expect(pavedTool).toHaveAttribute('aria-pressed', 'true');
+    await page.getByRole('grid').focus();
 
     // Move cursor with Arrow keys and place via Space
     // Initial cursor is at (1, 1). Move Right to (2, 1)
@@ -33,8 +61,18 @@ test.describe('THE LAST LIGHT: Controls, Accessibility Toggles, Persistence & Ed
     await page.keyboard.press('Control+z');
     await expect(budgetDisplay).toContainText('$150');
 
-    // Test Undo button in Header
+    // Test Redo via Ctrl+Y
+    await page.keyboard.press('Control+y');
+    await expect(budgetDisplay).toContainText('$135');
+    await page.keyboard.press('Control+z');
+    await expect(budgetDisplay).toContainText('$150');
+
+    // Test Undo & Redo buttons in Header
     await page.getByTestId('tile-2-1').click();
+    await expect(budgetDisplay).toContainText('$135');
+    await page.getByTestId('undo-button').click();
+    await expect(budgetDisplay).toContainText('$150');
+    await page.getByTestId('redo-button').click();
     await expect(budgetDisplay).toContainText('$135');
     await page.getByTestId('undo-button').click();
     await expect(budgetDisplay).toContainText('$150');
@@ -59,7 +97,10 @@ test.describe('THE LAST LIGHT: Controls, Accessibility Toggles, Persistence & Ed
 
   test('Failure Modal when path is deliberately blocked', async ({ page }) => {
     await page.goto('/');
+    await skipCinematic(page);
     await page.getByTestId('begin-chapter-button').click();
+    await dismissTutorial(page);
+    await showDesignBoard(page);
 
     // Deliberately run simulation without building path
     await page.getByTestId('run-simulation-button').click();
@@ -78,7 +119,10 @@ test.describe('THE LAST LIGHT: Controls, Accessibility Toggles, Persistence & Ed
 
   test('Settings toggles: High Contrast, Reduced Motion, Large Text, Captions', async ({ page }) => {
     await page.goto('/');
+    await skipCinematic(page);
     await page.getByTestId('begin-chapter-button').click();
+    await dismissTutorial(page);
+    await showDesignBoard(page);
 
     // Open settings
     await page.getByTestId('settings-button').click();
@@ -108,18 +152,27 @@ test.describe('THE LAST LIGHT: Controls, Accessibility Toggles, Persistence & Ed
 
   test('Persistence: Progress stored and recovered from localStorage', async ({ page }) => {
     await page.goto('/');
+    await skipCinematic(page);
     await page.getByTestId('begin-chapter-button').click();
+    await dismissTutorial(page);
+    await showDesignBoard(page);
 
-    // Mock progress in localStorage
-    await page.evaluate(() => {
-      localStorage.setItem(
-        'the_last_light_progress_v1',
-        JSON.stringify({ unlocked: [1, 2, 3], completed: [1, 2], chapterId: 2 })
-      );
-    });
+    // Complete the chapter through visible controls before checking persistence.
+    await page.getByTestId('tool-paved_walkway').click();
+    for (const tile of ['tile-2-1', 'tile-2-2', 'tile-5-2']) await page.getByTestId(tile).click();
+    await page.getByTestId('run-simulation-button').click();
+    await expect(page.getByTestId('reveal-modal')).toBeVisible();
+    await page.getByTestId('acknowledge-reveal-button').click();
+    await page.getByTestId('tool-ramp').click();
+    await page.getByTestId('tile-3-2').click();
+    await page.getByTestId('run-simulation-button').click();
+    await expect(page.getByTestId('victory-modal')).toBeVisible();
+    await page.getByTestId('victory-continue-button').click();
+    await expect(page.getByTestId('intro-modal')).toContainText('Chapter 2');
 
     // Reload page
     await page.reload();
+    await skipCinematic(page);
 
     // Verify Chapter 2 is loaded from persisted state
     const introModal = page.getByTestId('intro-modal');
@@ -132,10 +185,15 @@ test.describe('THE LAST LIGHT: Controls, Accessibility Toggles, Persistence & Ed
     const chapterSelectModal = page.getByTestId('chapter-select-modal');
     await expect(chapterSelectModal).toBeVisible();
 
-    // Verify Chapters 1 and 2 are marked completed
+    // Verify Chapter 1 is completed and Chapter 2 is unlocked.
     await expect(chapterSelectModal).toContainText('Chapter 1');
     await expect(chapterSelectModal).toContainText('Chapter 2');
     await expect(chapterSelectModal).toContainText('Chapter 3');
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '24-persisted-progress.png') });
+
+    await page.reload();
+    await expect(page.getByTestId('title-screen')).toBeVisible();
+    await page.getByRole('button', { name: 'Replay from Chapter 1' }).click();
+    await expect(page.getByTestId('intro-modal')).toContainText('Chapter 1');
   });
 });

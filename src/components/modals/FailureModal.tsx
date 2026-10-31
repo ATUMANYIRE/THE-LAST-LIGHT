@@ -2,49 +2,62 @@
 
 import React from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { AlertTriangle, RotateCcw, Wrench } from 'lucide-react';
+import { AlertTriangle, Wrench } from 'lucide-react';
+import { friendlyText } from '../../utils/friendlyText';
 
 export const FailureModal: React.FC = () => {
   const { simulationResult, showFailureModal, closeModals } = useGameStore();
-
   if (!showFailureModal || !simulationResult) return null;
 
   const failedResidents = simulationResult.residentResults.filter((r) => !r.success);
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-midnight-950/85 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="failure-title"
       data-testid="failure-modal"
+      style={{ background: 'rgba(20,31,42,0.80)', backdropFilter: 'blur(6px)' }}
     >
-      <div className="w-full max-w-lg bg-midnight-900 border-2 border-red-500/70 rounded-3xl p-5 sm:p-8 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 rounded-full bg-red-500/15 blur-3xl pointer-events-none" />
-
-        <div className="flex items-center space-x-2 text-xs font-bold text-red-400 uppercase tracking-wider mb-2">
-          <AlertTriangle className="w-4 h-4 text-red-400" />
-          <span>Accessibility Barrier Encountered</span>
+      <div
+        className="w-full max-w-md rounded-2xl p-6 sm:p-8"
+        style={{
+          background: 'rgba(37,52,59,0.97)',
+          border: '1px solid rgba(200,125,112,0.25)',
+          boxShadow: '0 20px 60px rgba(10,15,25,0.5)',
+        }}
+      >
+        <div className="flex items-center gap-2 mb-3" style={{ color: '#C87D70' }}>
+          <AlertTriangle className="w-4 h-4" />
+          <span className="text-[10px] font-sans tracking-widest uppercase">Accessibility Barrier Encountered</span>
         </div>
 
-        <h2 id="failure-title" className="text-xl sm:text-2xl font-black text-slate-100 tracking-tight mb-2">
+        <h2
+          id="failure-title"
+          className="font-display font-light italic mb-2"
+          style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)', color: '#F6F3EB', letterSpacing: '-0.01em' }}
+        >
           Route Needs Redesign
         </h2>
 
-        <p className="text-xs sm:text-sm text-slate-300 mb-4">
-          One or more neighbors were unable to safely complete their journey. Inspect the environmental obstacles below:
+        <p className="text-sm font-sans mb-5" style={{ color: 'rgba(221,215,203,0.65)' }}>
+          One or more neighbors were unable to safely complete their journey.
         </p>
 
-        <div className="flex flex-col space-y-2.5 mb-6">
+        <div className="flex flex-col gap-2.5 mb-6">
           {failedResidents.map((r) => (
             <div
               key={r.residentId}
-              className="p-3.5 rounded-xl bg-red-950/40 border border-red-500/40 text-xs sm:text-sm text-red-200 leading-normal"
+              className="p-3.5 rounded-xl text-sm font-sans leading-relaxed"
+              style={{
+                background: 'rgba(200,125,112,0.1)',
+                border: '1px solid rgba(200,125,112,0.2)',
+                color: 'rgba(221,215,203,0.85)',
+              }}
             >
-              <div className="font-bold text-red-300 mb-0.5 flex items-center space-x-1">
-                <span>{r.residentName}:</span>
-              </div>
-              <p>{r.failureReason}</p>
+              <span className="font-semibold" style={{ color: '#C87D70' }}>{r.residentName}: </span>
+              {friendlyText(r.failureReason ?? '')}
             </div>
           ))}
         </div>
@@ -53,10 +66,13 @@ export const FailureModal: React.FC = () => {
           onClick={closeModals}
           autoFocus
           data-testid="failure-retry-button"
-          className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-sm tracking-wide flex items-center justify-center space-x-2 shadow-lantern transition-all"
+          className="w-full py-3 px-6 rounded-xl font-sans font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all duration-150"
+          style={{ background: '#C87D70', color: '#F6F3EB', boxShadow: '0 4px 16px rgba(200,125,112,0.3)' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#D88D80'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = '#C87D70'; }}
         >
           <Wrench className="w-4 h-4" />
-          <span>Adjust Pathways & Try Again</span>
+          Adjust Pathways & Try Again
         </button>
       </div>
     </div>

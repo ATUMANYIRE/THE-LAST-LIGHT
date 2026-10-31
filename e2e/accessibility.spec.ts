@@ -1,11 +1,23 @@
 import { test, expect } from '@playwright/test';
 import * as path from 'path';
+import * as fs from 'fs';
 
-const SCREENSHOT_DIR = path.join(process.cwd(), 'e2e', 'screenshots');
+const SCREENSHOT_DIR = path.join(process.cwd(), 'artifacts', 'release-audit');
+fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
 
 test.describe('THE LAST LIGHT: Focused Accessibility Audit & Mobile Viewport', () => {
+  // Pre-seed localStorage so PlayerNameScreen and GameplayLoopModal don't block tests
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('tll_player_name', 'Tester');
+      localStorage.setItem('tll_loop_seen', '1');
+    });
+  });
+
   test('Focused Accessibility Audit: ARIA live regions, roles, and dialog attributes', async ({ page }) => {
     await page.goto('/');
+
+    await page.getByTestId('enter-3d-world-button').click();
 
     // 1. Verify ARIA Live polite announcement region exists
     const liveRegion = page.locator('div[aria-live="polite"][role="status"]');
@@ -19,6 +31,10 @@ test.describe('THE LAST LIGHT: Focused Accessibility Audit & Mobile Viewport', (
 
     // 3. Close modal and check board semantics
     await page.getByTestId('begin-chapter-button').click();
+    await expect(page.getByRole('dialog', { name: 'Tutorial' })).toBeVisible();
+    await page.getByRole('button', { name: 'Skip tutorial' }).click();
+    await page.getByRole('button', { name: 'Switch to Design Mode' }).click();
+    await page.getByTestId('view-mode-button').click();
     const board = page.locator('div[role="grid"]');
     await expect(board).toBeVisible();
     await expect(board).toHaveAttribute('aria-label', /City Board/);
@@ -47,11 +63,17 @@ test.describe('THE LAST LIGHT: Focused Accessibility Audit & Mobile Viewport', (
     await page.setViewportSize({ width: 393, height: 851 });
     await page.goto('/');
 
+    await page.getByTestId('enter-3d-world-button').click();
+
     const introModal = page.getByTestId('intro-modal');
     await expect(introModal).toBeVisible();
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, '30-mobile-intro.png') });
 
     await page.getByTestId('begin-chapter-button').click();
+    await expect(page.getByRole('dialog', { name: 'Tutorial' })).toBeVisible();
+    await page.getByRole('button', { name: 'Skip tutorial' }).click();
+    await page.getByRole('button', { name: 'Switch to Design Mode' }).click();
+    await page.getByTestId('view-mode-button').click();
 
     // Check board container does not overflow page viewport
     const board = page.locator('div[role="grid"]');

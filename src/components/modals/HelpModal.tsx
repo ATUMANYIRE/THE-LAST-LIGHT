@@ -35,6 +35,10 @@ export const HelpModal: React.FC = () => {
           </button>
         </div>
 
+        <div className="mb-5 rounded-xl border border-civic-emerald/30 bg-midnight-950/70 p-3.5 text-xs sm:text-sm text-slate-200 leading-relaxed">
+          <strong className="text-glow-soft">Start here:</strong> Guide Maya toward the Library in Explore Mode. Switch to Design Mode with Tab or the mode button, choose a Path tool, and place tiles to connect her start to the destination. Press Test Route. If a journey fails, read the barrier explanation, improve the route, and test again. A successful chapter offers the next chapter button.
+        </div>
+
         {/* Keyboard Controls Section */}
         <div className="mb-6">
           <div className="flex items-center space-x-2 text-xs font-bold text-glow-warm uppercase tracking-wider mb-2.5">
@@ -43,12 +47,12 @@ export const HelpModal: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 gap-2 text-xs font-mono">
             <div className="p-2.5 rounded-lg bg-midnight-950/80 border border-midnight-800">
-              <span className="text-glow-soft font-bold block mb-0.5">Arrow Keys / WASD</span>
-              <span className="text-slate-400 font-sans text-[11px]">Navigate board cursor</span>
+              <span className="text-glow-soft font-bold block mb-0.5">Explore: WASD / arrows</span>
+              <span className="text-slate-400 font-sans text-[11px]">Walk; hold Shift to jog. Drag to look. Touch: use the on-screen arrows.</span>
             </div>
             <div className="p-2.5 rounded-lg bg-midnight-950/80 border border-midnight-800">
-              <span className="text-glow-soft font-bold block mb-0.5">Space / Enter</span>
-              <span className="text-slate-400 font-sans text-[11px]">Place selected tool</span>
+              <span className="text-glow-soft font-bold block mb-0.5">Design: arrows + Space</span>
+              <span className="text-slate-400 font-sans text-[11px]">Move the board cursor and place the selected tool. Tab switches modes.</span>
             </div>
             <div className="p-2.5 rounded-lg bg-midnight-950/80 border border-midnight-800">
               <span className="text-glow-soft font-bold block mb-0.5">Keys 1 - 6</span>

@@ -94,6 +94,7 @@ export const GameBoard: React.FC = () => {
       <div
         className="relative rounded-xl border border-midnight-700 bg-midnight-950 overflow-auto max-w-full shadow-inner select-none p-2"
         role="grid"
+        tabIndex={0}
         aria-label={`${currentChapter.title} City Board`}
       >
         <svg
@@ -134,6 +135,7 @@ export const GameBoard: React.FC = () => {
                 data-testid={`tile-${tile.x}-${tile.y}`}
                 transform={`translate(${tx}, ${ty})`}
                 onClick={() => {
+                  if (useGameStore.getState().gameMode !== 'design') return;
                   setCursor({ x: tile.x, y: tile.y });
                   applyToolToTile(tile.x, tile.y);
                 }}

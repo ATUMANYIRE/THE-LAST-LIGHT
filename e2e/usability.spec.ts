@@ -1,0 +1,37 @@
+import { test, expect } from '@playwright/test';
+
+test('a clean first-time player sees the objective, controls, build loop and failure guidance', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByTestId('player-name-screen')).toBeVisible();
+  await page.getByRole('textbox', { name: 'Your name' }).fill('New Player');
+  await page.getByTestId('begin-journey-button').click();
+  await expect(page.getByTestId('gameplay-loop-modal')).toBeVisible();
+  await page.getByTestId('loop-begin-button').click();
+  await expect(page.getByTestId('title-screen')).toContainText('Urban Accessibility Puzzle');
+  await page.getByTestId('enter-3d-world-button').click();
+  await expect(page.getByTestId('intro-modal')).toContainText('Maya');
+  await page.getByTestId('begin-chapter-button').click();
+  const tutorial = page.getByRole('dialog', { name: 'Tutorial' });
+  await expect(tutorial).toContainText('Walk with WASD or arrow keys');
+  await expect(tutorial).toContainText('Design Mode');
+  await tutorial.getByRole('button', { name: 'Next' }).click();
+  await expect(tutorial).toContainText('Clocktower Library');
+  await expect(tutorial).toContainText('labeled tiles');
+  for (let step = 0; step < 5; step++) await tutorial.getByRole('button', { name: 'Next' }).click();
+  await expect(tutorial).toContainText('Test Your Route');
+  await tutorial.getByRole('button', { name: 'Start Playing' }).click();
+  await expect(tutorial).toBeHidden();
+  await page.getByTestId('help-button').click();
+  await expect(page.getByTestId('help-modal')).toContainText('Start here:');
+  await expect(page.getByTestId('help-modal')).toContainText('read the barrier explanation');
+  await page.getByTestId('close-help-button').click();
+  await page.getByRole('button', { name: 'Switch to Design Mode' }).click();
+  await page.getByTestId('view-mode-button').click();
+  await expect(page.getByRole('grid')).toBeVisible();
+  await page.getByTestId('tool-paved_walkway').click();
+  await page.getByTestId('tile-2-1').click();
+  await expect(page.getByTestId('budget-display')).toContainText('$135');
+  await page.getByTestId('run-simulation-button').click();
+  await expect(page.getByTestId('failure-modal')).toBeVisible();
+  await expect(page.getByTestId('failure-modal')).toContainText('Route Needs Redesign');
+});
